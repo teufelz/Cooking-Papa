@@ -14,18 +14,19 @@ public class CardBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Script loaded");
+        // Debug.Log("Script loaded");
     }
 
     void OnMouseOver()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Clicked");
+            // Debug.Log("Clicked");
+            Debug.Log(gameObject.transform.position);
         }
         if (mouseIn == false)
         {
-            Debug.Log("over");
+            // Debug.Log("over");
             mouseIn = true;
         }
     }
@@ -34,7 +35,7 @@ public class CardBehavior : MonoBehaviour
     {
         if (mouseIn == true)
         {
-            Debug.Log("mouse exit");
+            // Debug.Log("mouse exit");
             mouseIn = false;
         }
     }
