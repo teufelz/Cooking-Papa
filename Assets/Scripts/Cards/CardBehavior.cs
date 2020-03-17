@@ -7,6 +7,8 @@ public class CardBehavior : MonoBehaviour
     // Don't forget to create collider
     public int player;
     public bool visible;
+    public bool name;
+    public bool cardType;
 
     bool mouseIn = false;
     // Start is called before the first frame update

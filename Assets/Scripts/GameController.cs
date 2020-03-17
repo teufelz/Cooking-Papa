@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         turn = 1;
-        player = turn;
+        player = turn%4;
         phase = "StartTurn";
         StartCoroutine(Controller());
     }
