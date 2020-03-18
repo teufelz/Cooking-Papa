@@ -27,13 +27,13 @@ public class DishCardViz : MonoBehaviour
         card = c;
         title.text = c.title;
         
-        foreach (Sprite sprite in c.ingredients)
+        foreach (IngredientCard ingredient in c.ingredients)
         {
             GameObject obj = Instantiate(gameObject,art.transform);
             obj.name = "Ingredient";
             Image image = obj.AddComponent<Image>();
 
-            image.sprite = sprite;
+            image.sprite = ingredient.sprite;
 
         }
 

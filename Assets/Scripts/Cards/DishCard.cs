@@ -6,6 +6,6 @@ using UnityEngine;
 public class DishCard : ScriptableObject
 {
     public string title;
-    public List<Sprite> ingredients;
+    public List<IngredientCard> ingredients;
     public int score;
 }
