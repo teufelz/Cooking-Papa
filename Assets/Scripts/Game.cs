@@ -50,6 +50,7 @@ public class Game : MonoBehaviour
 
     private void cyclePlayerIng()
     {
+        // Cycle Player Ing. card 1=>4=>2=>3
         List<GameObject> children1 = GetAllChilds(player1Ing);
         List<GameObject> children2 = GetAllChilds(player2Ing);
         List<GameObject> children3 = GetAllChilds(player3Ing);
@@ -93,7 +94,7 @@ public class Game : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.D))
         {
-            //you don't have to instantiate at the transform's positio nand rotation, swap these for what suits your needs
+            // draw ing.
             go = Instantiate(copyCard, selectedPlayer.transform);
             go.name = "IngCard" + counter.ToString();
             counter++;
@@ -101,12 +102,14 @@ public class Game : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
+            // discard ing.
             // Destroy(go);
             var child = selectedPlayer.transform.GetChild(0).gameObject; // Destroy by index
             Destroy(child);
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
+            // cycle player
             cyclePlayerIng();
         }
     }
