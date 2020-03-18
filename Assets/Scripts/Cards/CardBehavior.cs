@@ -7,7 +7,6 @@ public class CardBehavior : MonoBehaviour
     // Don't forget to create collider
     public int player;
     public bool visible;
-    public bool name;
     public bool cardType;
 
     bool mouseIn = false;
@@ -23,6 +22,7 @@ public class CardBehavior : MonoBehaviour
         {
             // Debug.Log("Clicked");
             Debug.Log(gameObject.transform.position);
+            Debug.Log(gameObject.GetComponent<IngredientCardViz>().getTitle());
         }
         if (mouseIn == false)
         {

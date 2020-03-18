@@ -11,6 +11,11 @@ public class IngredientCardViz : MonoBehaviour
 
     public IngredientCard card;
 
+    public string getTitle()
+    {
+        return title.text;
+    }
+
     void Start()
     {
         LoadCard(card);
