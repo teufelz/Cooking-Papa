@@ -15,12 +15,6 @@ public class Game : MonoBehaviour
     int counter;
     Transform selectedPlayer;
 
-    void Start()
-    {
-        counter = 1;
-        selectedPlayer = player1Ing;
-    }
-
     private void selectPlayer(KeyCode key)
     {
         if (key == KeyCode.Alpha1)
@@ -43,6 +37,45 @@ public class Game : MonoBehaviour
             Debug.Log("Player4 is selected");
             selectedPlayer = player4Ing;
         }
+    }
+    private static List<GameObject> GetAllChilds(Transform ts)
+    {
+        List<GameObject> list = new List<GameObject>();
+        for (int i = 0; i < ts.childCount; i++)
+        {
+            list.Add(ts.GetChild(i).gameObject);
+        }
+        return list;
+    }
+
+    private void cyclePlayerIng()
+    {
+        List<GameObject> children1 = GetAllChilds(player1Ing);
+        List<GameObject> children2 = GetAllChilds(player2Ing);
+        List<GameObject> children3 = GetAllChilds(player3Ing);
+        List<GameObject> children4 = GetAllChilds(player4Ing);
+        foreach (GameObject child in children1)
+        {
+            child.transform.parent = player4Ing;
+        }
+        foreach (GameObject child in children2)
+        {
+            child.transform.parent = player3Ing;
+        }
+        foreach (GameObject child in children3)
+        {
+            child.transform.parent = player1Ing;
+        }
+        foreach (GameObject child in children4)
+        {
+            child.transform.parent = player2Ing;
+        }
+    }
+
+    void Start()
+    {
+        counter = 1;
+        selectedPlayer = player1Ing;
     }
 
     void OnGUI()
@@ -71,6 +104,10 @@ public class Game : MonoBehaviour
             // Destroy(go);
             var child = selectedPlayer.transform.GetChild(0).gameObject; // Destroy by index
             Destroy(child);
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            cyclePlayerIng();
         }
     }
 }
