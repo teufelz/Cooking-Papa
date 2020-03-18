@@ -22,6 +22,8 @@ public class CardBehavior : MonoBehaviour
         {
             // Debug.Log("Clicked");
             Debug.Log(gameObject.transform.position);
+
+            // Get card title (or type) by accessing it script
             Debug.Log(gameObject.GetComponent<IngredientCardViz>().getTitle());
         }
         if (mouseIn == false)
