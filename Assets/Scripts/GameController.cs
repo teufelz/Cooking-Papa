@@ -6,21 +6,18 @@ public class GameController : MonoBehaviour
 {
     public GameObject prefabIng;
 
+    public List<Transform> AllIngTransfrom;
+
+    public Transform overlayCanvas;
+
     private int turn;
     private string phase;
     private int player;
-
-    public Transform player1Ts;
-    public Transform player2Ts;
-    public Transform player3Ts;
-    public Transform player4Ts;
 
     private List<IngredientCard> player1Ing;
     private List<IngredientCard> player2Ing;
     private List<IngredientCard> player3Ing;
     private List<IngredientCard> player4Ing;
-
-    public List<Transform> AllIngTransfrom;
 
     private List<IngredientCard> ingredientDeck;
     private List<EventCard> eventDeck;
@@ -109,7 +106,7 @@ public class GameController : MonoBehaviour
             for (int count = 0; count< 5; count++)
             {
                 AllIngCard[idx].Add(ingredientDeck[ingredientIdx]);
-                ingredientIdx++;
+                ingredientIdx = (ingredientIdx + 1) % ingredientDeck.Count;
             }
             UpdateIngCard(idx, idx);
         }
@@ -173,7 +170,7 @@ public class GameController : MonoBehaviour
         while (AllIngCard[player - 1].Count < 2)
         {
             AllIngCard[player - 1].Add(ingredientDeck[ingredientIdx]);
-            ingredientIdx++;
+            ingredientIdx = (ingredientIdx + 1) % ingredientDeck.Count;
             UpdateIngCard(0, player - 1);
         }
         
@@ -181,7 +178,7 @@ public class GameController : MonoBehaviour
         IngredientCard choice1 = ingredientDeck[ingredientIdx];
         IngredientCard choice2 = ingredientDeck[ingredientIdx + 1];
 
-        ingredientIdx += 2;
+        ingredientIdx = (ingredientIdx + 2) % ingredientDeck.Count;
 
         IngredientCard selected = null;
 
@@ -208,7 +205,7 @@ public class GameController : MonoBehaviour
         {
             for (int count = 0; count > noCardDiff; count--)
             {
-                Instantiate(prefabIng, AllIngTransfrom[transfromIdx]);
+                Instantiate(prefabIng, AllIngTransfrom[transfromIdx]).GetComponent<CardBehavior>().canvas = overlayCanvas;
             }
         }
 
@@ -334,7 +331,7 @@ public class GameController : MonoBehaviour
             {
                 for (int count = 0; count > noCardDiff; count--)
                 {
-                    Instantiate(prefabIng, AllIngTransfrom[shift]);
+                    Instantiate(prefabIng, AllIngTransfrom[shift]).GetComponent<CardBehavior>().canvas = overlayCanvas;
                 }
             }
 
