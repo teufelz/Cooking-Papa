@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Food
   ingredients:
-  - {fileID: 21300000, guid: 8b6ee74c5836c76439c6a43bcf478f64, type: 3}
-  - {fileID: 21300000, guid: dff620547063be14f88abf4e701b708d, type: 3}
-  - {fileID: 21300000, guid: a269cb842eb1da6459f9a9eda5c2dd0b, type: 3}
+  - {fileID: 11400000, guid: 960e5c1371f35d74e8ad9b490a1606dc, type: 2}
+  - {fileID: 11400000, guid: 8597aac1b05ecd2498f7a1f5276886ee, type: 2}
+  - {fileID: 11400000, guid: 3df540827e4e32947b91d9679e2bc2e7, type: 2}
   score: 5
