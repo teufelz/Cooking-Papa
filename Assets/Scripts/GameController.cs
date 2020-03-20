@@ -27,6 +27,9 @@ public class GameController : MonoBehaviour
 
     private int ingredientIdx;
 
+    private GameObject overlayDraw1;
+    private GameObject overlayDraw2;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -52,6 +55,17 @@ public class GameController : MonoBehaviour
             player3Ing,
             player4Ing
         };
+
+        overlayDraw1 = Instantiate(prefabIng, overlayCanvas);
+        overlayDraw1.transform.position = new Vector3(350, 200, 0);
+        overlayDraw1.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+        overlayDraw2 = Instantiate(prefabIng, overlayCanvas);
+        overlayDraw2.transform.position = new Vector3(550, 200, 0);
+        overlayDraw2.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+        overlayDraw1.SetActive(false);
+        overlayDraw2.SetActive(false);
 
         GenerateIngDeck();
         InitializeDraw();
@@ -184,6 +198,9 @@ public class GameController : MonoBehaviour
 
         yield return StartCoroutine(WaitForDrawCard(choice1, choice2, value => selected = value));
 
+        overlayDraw1.SetActive(false);
+        overlayDraw2.SetActive(false);
+
         AllIngCard[player - 1].Add(selected);
         UpdateIngCard(0, player - 1);
 
@@ -221,6 +238,12 @@ public class GameController : MonoBehaviour
         bool selected = false;
         Debug.Log(choice1);
         Debug.Log(choice2);
+
+        overlayDraw1.GetComponent<IngredientCardViz>().LoadCard(choice1);
+        overlayDraw2.GetComponent<IngredientCardViz>().LoadCard(choice2);
+
+        overlayDraw1.SetActive(true);
+        overlayDraw2.SetActive(true);
 
         while (!selected)
         {

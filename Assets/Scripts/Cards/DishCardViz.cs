@@ -11,7 +11,7 @@ public class DishCardViz : MonoBehaviour
 
     public DishCard card;
 
-    private GameObject gameObject;
+    private new GameObject gameObject;
 
     void Start()
     {
