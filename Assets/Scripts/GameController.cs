@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour
     List<List<IngredientCard>> AllIngCard;
 
     private int ingredientIdx;
+    private int dishIdx;
 
     // Start is called before the first frame update
     void Start()
@@ -55,22 +56,52 @@ public class GameController : MonoBehaviour
         };
 
         GenerateIngDeck();
+        GenerateDishDeck();
         InitializeDraw();
+    }
+
+    private void GenerateDishDeck()
+    {
+        dishDeck = new List<DishCard>();
+        string[] paths = { "Cards/Dish/Food", "Cards/Dish/PapayaPokPok", "Cards/Dish/Stew" };
+
+        // load cards
+        foreach (string path in paths)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                dishDeck.Add(Resources.Load(path) as DishCard);
+            }
+        }
+
+        // shuffle cards
+        for (int i = 0; i < dishDeck.Count; i++)
+        {
+            DishCard temp = dishDeck[i];
+            int randomIndex = Random.Range(i, dishDeck.Count);
+            dishDeck[i] = dishDeck[randomIndex];
+            dishDeck[randomIndex] = temp;
+        }
+
+        //set index to 0
+        dishIdx = 0;
     }
 
     private void GenerateIngDeck()
     {
         ingredientDeck = new List<IngredientCard>();
 
-        Dictionary<string, bool> paths = new Dictionary<string, bool>();
-        paths["Cards/Ingredient/MeatBonus"] = true;
-        paths["Cards/Ingredient/FishBonus"] = true;
-        paths["Cards/Ingredient/FlourBonus"] = true;
-        paths["Cards/Ingredient/SpinachBonus"] = true;
-        paths["Cards/Ingredient/Meat"] = false;
-        paths["Cards/Ingredient/Fish"] = false;
-        paths["Cards/Ingredient/Flour"] = false;
-        paths["Cards/Ingredient/Spinach"] = false;
+        Dictionary<string, bool> paths = new Dictionary<string, bool>
+        {
+            ["Cards/Ingredient/MeatBonus"] = true,
+            ["Cards/Ingredient/FishBonus"] = true,
+            ["Cards/Ingredient/FlourBonus"] = true,
+            ["Cards/Ingredient/SpinachBonus"] = true,
+            ["Cards/Ingredient/Meat"] = false,
+            ["Cards/Ingredient/Fish"] = false,
+            ["Cards/Ingredient/Flour"] = false,
+            ["Cards/Ingredient/Spinach"] = false
+        };
 
         //load cards
         foreach (string path in paths.Keys)
