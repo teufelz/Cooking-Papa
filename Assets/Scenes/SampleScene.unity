@@ -2299,6 +2299,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabIng: {fileID: 7267407105439583274, guid: 36b4b1110f9cc4c429c9fe6c97d63b95,
     type: 3}
+  prefabDish: {fileID: 5034083065505514963, guid: 68a8647e66c17b24796518c53cc95ba4,
+    type: 3}
   AllIngTransform:
   - {fileID: 2096227834}
   - {fileID: 164326892}

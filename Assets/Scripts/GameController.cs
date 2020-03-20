@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     public GameObject prefabIng;
+    public GameObject prefabDish;
 
     public List<Transform> AllIngTransform;
     public Transform dishTransform;
@@ -25,6 +26,7 @@ public class GameController : MonoBehaviour
     private List<DishCard> dishDeck;
 
     List<List<IngredientCard>> AllIngCard;
+    List<DishCard> AllDishCard;
 
     private int ingredientIdx;
     private int dishIdx;
@@ -141,6 +143,7 @@ public class GameController : MonoBehaviour
                 ingredientIdx = (ingredientIdx + 1) % ingredientDeck.Count;
             }
             UpdateIngCard(idx, idx);
+            // UpdateDishCard();
         }
     }
 
@@ -245,6 +248,21 @@ public class GameController : MonoBehaviour
         {
             IngredientCardViz Viz = AllIngTransform[transfromIdx].GetChild(idx).GetComponent<IngredientCardViz>();
             Viz.LoadCard(AllIngCard[playerIdx][idx]);
+        }
+    }
+
+    // TODO: Fix this I don't get the algorithm
+    private void UpdateDishCard()
+    {
+        while (dishTransform.childCount < 3)
+        {
+            Debug.Log("Draw Dish");
+            Instantiate(prefabDish, dishTransform).GetComponent<CardBehavior>().canvas = overlayCanvas;
+        }
+        for (int idx = 0; idx < 3; idx++)
+        {
+            DishCardViz Viz = dishTransform.GetChild(idx).GetComponent<DishCardViz>();
+            Viz.LoadCard(dishDeck[idx]);
         }
     }
 
