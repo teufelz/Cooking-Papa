@@ -2299,11 +2299,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabIng: {fileID: 7267407105439583274, guid: 36b4b1110f9cc4c429c9fe6c97d63b95,
     type: 3}
-  AllIngTransfrom:
+  AllIngTransform:
   - {fileID: 2096227834}
   - {fileID: 164326892}
   - {fileID: 628261084}
   - {fileID: 1580083969}
+  dishTransform: {fileID: 1196454475}
   overlayCanvas: {fileID: 935105232}
 --- !u!4 &2074374293
 Transform:

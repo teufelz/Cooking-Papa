@@ -6,7 +6,8 @@ public class GameController : MonoBehaviour
 {
     public GameObject prefabIng;
 
-    public List<Transform> AllIngTransfrom;
+    public List<Transform> AllIngTransform;
+    public Transform dishTransform;
 
     public Transform overlayCanvas;
 
@@ -192,26 +193,26 @@ public class GameController : MonoBehaviour
 
     private void UpdateIngCard(int transfromIdx, int playerIdx)
     {
-        int noCardDiff = AllIngTransfrom[transfromIdx].childCount - AllIngCard[playerIdx].Count;
+        int noCardDiff = AllIngTransform[transfromIdx].childCount - AllIngCard[playerIdx].Count;
 
         if (noCardDiff > 0)
         {
             for (int count = 0; count < noCardDiff; count++)
             {
-                Destroy(AllIngTransfrom[transfromIdx].GetChild(AllIngTransfrom[transfromIdx].childCount - count - 1).gameObject);
+                Destroy(AllIngTransform[transfromIdx].GetChild(AllIngTransform[transfromIdx].childCount - count - 1).gameObject);
             }
         }
         else if (noCardDiff < 0)
         {
             for (int count = 0; count > noCardDiff; count--)
             {
-                Instantiate(prefabIng, AllIngTransfrom[transfromIdx]).GetComponent<CardBehavior>().canvas = overlayCanvas;
+                Instantiate(prefabIng, AllIngTransform[transfromIdx]).GetComponent<CardBehavior>().canvas = overlayCanvas;
             }
         }
 
         for (int idx = 0; idx < AllIngCard[playerIdx].Count; idx++)
         {
-            IngredientCardViz Viz = AllIngTransfrom[transfromIdx].GetChild(idx).GetComponent<IngredientCardViz>();
+            IngredientCardViz Viz = AllIngTransform[transfromIdx].GetChild(idx).GetComponent<IngredientCardViz>();
             Viz.LoadCard(AllIngCard[playerIdx][idx]);
         }
     }
@@ -318,26 +319,26 @@ public class GameController : MonoBehaviour
 
         for (int shift = 0; shift < 4; shift++)
         {
-            int noCardDiff = AllIngTransfrom[shift].childCount - noCard[(player + shift) % 4];
+            int noCardDiff = AllIngTransform[shift].childCount - noCard[(player + shift) % 4];
 
             if (noCardDiff > 0)
             {
                 for (int count = 0; count < noCardDiff; count++) 
                 {
-                    Destroy(AllIngTransfrom[shift].GetChild(AllIngTransfrom[shift].childCount - count-1).gameObject);
+                    Destroy(AllIngTransform[shift].GetChild(AllIngTransform[shift].childCount - count-1).gameObject);
                 }
             }
             else if (noCardDiff < 0)
             {
                 for (int count = 0; count > noCardDiff; count--)
                 {
-                    Instantiate(prefabIng, AllIngTransfrom[shift]).GetComponent<CardBehavior>().canvas = overlayCanvas;
+                    Instantiate(prefabIng, AllIngTransform[shift]).GetComponent<CardBehavior>().canvas = overlayCanvas;
                 }
             }
 
             for (int idx = 0; idx < AllIngCard[(player + shift) % 4].Count; idx++)
             {
-                IngredientCardViz Viz = AllIngTransfrom[shift].GetChild(idx).GetComponent<IngredientCardViz>();
+                IngredientCardViz Viz = AllIngTransform[shift].GetChild(idx).GetComponent<IngredientCardViz>();
                 Viz.LoadCard(AllIngCard[(player + shift) % 4][idx]);
             }
         }
