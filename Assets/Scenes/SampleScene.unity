@@ -471,6 +471,12 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 7180596857581956729, guid: 68a8647e66c17b24796518c53cc95ba4,
+        type: 3}
+      propertyPath: card
+      value: 
+      objectReference: {fileID: 11400000, guid: d8acf7a71d5d8eb40ac2ad5146182462,
+        type: 2}
     - target: {fileID: 7793879786565864171, guid: 68a8647e66c17b24796518c53cc95ba4,
         type: 3}
       propertyPath: m_AnchorMin.y
