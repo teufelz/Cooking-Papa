@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5733534991596648162}
   - component: {fileID: 2475809385614844186}
+  - component: {fileID: -3201076511511137195}
   m_Layer: 5
-  m_Name: UsableCard
+  m_Name: EventCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,6 +55,22 @@ MonoBehaviour:
   effect: {fileID: 1761068609}
   type: {fileID: 2928314362347048356}
   card: {fileID: 0}
+--- !u!114 &-3201076511511137195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733534991596648163}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f1bd705b60c9b408b1751c6641e132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: 0
+  visible: 0
+  cardType: 0
+  canvas: {fileID: 0}
 --- !u!1 &5733534991740835376
 GameObject:
   m_ObjectHideFlags: 0

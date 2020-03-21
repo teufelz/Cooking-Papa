@@ -471,6 +471,12 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 7180596857581956729, guid: 68a8647e66c17b24796518c53cc95ba4,
+        type: 3}
+      propertyPath: card
+      value: 
+      objectReference: {fileID: 11400000, guid: d8acf7a71d5d8eb40ac2ad5146182462,
+        type: 2}
     - target: {fileID: 7793879786565864171, guid: 68a8647e66c17b24796518c53cc95ba4,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -2293,11 +2299,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabIng: {fileID: 7267407105439583274, guid: 36b4b1110f9cc4c429c9fe6c97d63b95,
     type: 3}
-  AllIngTransfrom:
+  prefabDish: {fileID: 5034083065505514963, guid: 68a8647e66c17b24796518c53cc95ba4,
+    type: 3}
+  AllIngTransform:
   - {fileID: 2096227834}
   - {fileID: 164326892}
   - {fileID: 628261084}
   - {fileID: 1580083969}
+  dishTransform: {fileID: 1196454475}
   overlayCanvas: {fileID: 935105232}
 --- !u!4 &2074374293
 Transform:

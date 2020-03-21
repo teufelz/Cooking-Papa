@@ -350,6 +350,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5034083066104166422}
   - component: {fileID: 7180596857581956729}
+  - component: {fileID: 5219471720386521317}
   m_Layer: 5
   m_Name: DishCard
   m_TagString: Untagged
@@ -393,6 +394,22 @@ MonoBehaviour:
   art: {fileID: 8692568516205460617}
   score: {fileID: 5685882697460793022}
   card: {fileID: 0}
+--- !u!114 &5219471720386521317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5034083065505514963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f1bd705b60c9b408b1751c6641e132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: 0
+  visible: 0
+  cardType: 0
+  canvas: {fileID: 0}
 --- !u!1 &8692568516205460617
 GameObject:
   m_ObjectHideFlags: 0

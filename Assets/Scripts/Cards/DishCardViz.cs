@@ -11,11 +11,8 @@ public class DishCardViz : MonoBehaviour
 
     public DishCard card;
 
-    private GameObject gameObject;
-
     void Start()
     {
-        gameObject = new GameObject();
         LoadCard(card);
     }
 
@@ -29,12 +26,23 @@ public class DishCardViz : MonoBehaviour
         
         foreach (IngredientCard ingredient in c.ingredients)
         {
-            GameObject obj = Instantiate(gameObject,art.transform);
-            obj.name = "Ingredient";
-            Image image = obj.AddComponent<Image>();
+            int idx = 0;
+            GameObject obj;
+            Image image;
+            if (art.transform.childCount < c.ingredients.Count)
+            {
+                obj = Instantiate(new GameObject(),art.transform);
+                obj.name = "Ingredient";
+                image = obj.AddComponent<Image>();
+            }
+            else
+            {
+                obj = art.transform.GetChild(idx).gameObject;
+                image = obj.GetComponent<Image>();
+            }
 
             image.sprite = ingredient.sprite;
-
+            idx++;
         }
 
         score.text = c.score.ToString();

@@ -5,8 +5,10 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     public GameObject prefabIng;
+    public GameObject prefabDish;
 
-    public List<Transform> AllIngTransfrom;
+    public List<Transform> AllIngTransform;
+    public Transform dishTransform;
 
     public Transform overlayCanvas;
 
@@ -24,8 +26,10 @@ public class GameController : MonoBehaviour
     private List<DishCard> dishDeck;
 
     List<List<IngredientCard>> AllIngCard;
+    List<DishCard> AllDishCard;
 
     private int ingredientIdx;
+    private int dishIdx;
 
     // Start is called before the first frame update
     void Start()
@@ -53,23 +57,71 @@ public class GameController : MonoBehaviour
             player4Ing
         };
 
+        AllDishCard = new List<DishCard>();
+
         GenerateIngDeck();
+        GenerateDishDeck();
         InitializeDraw();
+    }
+
+    private void GenerateDishDeck()
+    {
+        dishDeck = new List<DishCard>();
+        string path = "Cards/Dish/Food";
+
+        // load cards
+        for (int count = 1; count < 16; count++) 
+        {
+            string realPath = path + count.ToString();
+            if (count < 11)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    dishDeck.Add(Resources.Load(realPath) as DishCard);
+                }
+            }
+            else if (count < 15)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    dishDeck.Add(Resources.Load(realPath) as DishCard);
+                }
+            }
+            else
+            {
+                dishDeck.Add(Resources.Load(realPath) as DishCard);    
+            }
+
+        }
+
+        // shuffle cards
+        for (int i = 0; i < dishDeck.Count; i++)
+        {
+            DishCard temp = dishDeck[i];
+            int randomIndex = Random.Range(i, dishDeck.Count);
+            dishDeck[i] = dishDeck[randomIndex];
+            dishDeck[randomIndex] = temp;
+        }
+
+        //set index to 0
+        dishIdx = 0;
     }
 
     private void GenerateIngDeck()
     {
         ingredientDeck = new List<IngredientCard>();
 
-        Dictionary<string, bool> paths = new Dictionary<string, bool>();
-        paths["Cards/Ingredient/MeatBonus"] = true;
-        paths["Cards/Ingredient/FishBonus"] = true;
-        paths["Cards/Ingredient/FlourBonus"] = true;
-        paths["Cards/Ingredient/SpinachBonus"] = true;
-        paths["Cards/Ingredient/Meat"] = false;
-        paths["Cards/Ingredient/Fish"] = false;
-        paths["Cards/Ingredient/Flour"] = false;
-        paths["Cards/Ingredient/Spinach"] = false;
+        Dictionary<string, bool> paths = new Dictionary<string, bool>
+        {
+            ["Cards/Ingredient/MeatBonus"] = true,
+            ["Cards/Ingredient/FishBonus"] = true,
+            ["Cards/Ingredient/FlourBonus"] = true,
+            ["Cards/Ingredient/SpinachBonus"] = true,
+            ["Cards/Ingredient/Meat"] = false,
+            ["Cards/Ingredient/Fish"] = false,
+            ["Cards/Ingredient/Flour"] = false,
+            ["Cards/Ingredient/Spinach"] = false
+        };
 
         //load cards
         foreach (string path in paths.Keys)
@@ -110,6 +162,8 @@ public class GameController : MonoBehaviour
             }
             UpdateIngCard(idx, idx);
         }
+
+        DrawDishCard();
     }
 
     // Update is called once per frame
@@ -192,27 +246,41 @@ public class GameController : MonoBehaviour
 
     private void UpdateIngCard(int transfromIdx, int playerIdx)
     {
-        int noCardDiff = AllIngTransfrom[transfromIdx].childCount - AllIngCard[playerIdx].Count;
+        int noCardDiff = AllIngTransform[transfromIdx].childCount - AllIngCard[playerIdx].Count;
 
         if (noCardDiff > 0)
         {
             for (int count = 0; count < noCardDiff; count++)
             {
-                Destroy(AllIngTransfrom[transfromIdx].GetChild(AllIngTransfrom[transfromIdx].childCount - count - 1).gameObject);
+                Destroy(AllIngTransform[transfromIdx].GetChild(AllIngTransform[transfromIdx].childCount - count - 1).gameObject);
             }
         }
         else if (noCardDiff < 0)
         {
             for (int count = 0; count > noCardDiff; count--)
             {
-                Instantiate(prefabIng, AllIngTransfrom[transfromIdx]).GetComponent<CardBehavior>().canvas = overlayCanvas;
+                Instantiate(prefabIng, AllIngTransform[transfromIdx]).GetComponent<CardBehavior>().canvas = overlayCanvas;
             }
         }
 
         for (int idx = 0; idx < AllIngCard[playerIdx].Count; idx++)
         {
-            IngredientCardViz Viz = AllIngTransfrom[transfromIdx].GetChild(idx).GetComponent<IngredientCardViz>();
+            IngredientCardViz Viz = AllIngTransform[transfromIdx].GetChild(idx).GetComponent<IngredientCardViz>();
             Viz.LoadCard(AllIngCard[playerIdx][idx]);
+        }
+    }
+
+    // TODO: Fix this I don't get the algorithm
+    private void UpdateDishCard()
+    {
+        while (dishTransform.childCount < 3)
+        {
+            Instantiate(prefabDish, dishTransform).GetComponent<CardBehavior>().canvas = overlayCanvas;
+        }
+        for (int idx = 0; idx < 3; idx++)
+        {
+            DishCardViz Viz = dishTransform.GetChild(idx).GetComponent<DishCardViz>();
+            Viz.LoadCard(dishDeck[idx]);
         }
     }
 
@@ -299,11 +367,23 @@ public class GameController : MonoBehaviour
         Debug.Log("End Phase");
         yield return new WaitForSeconds(1);
         //check dish & hand & score
+        DrawDishCard();
+
         CyclePlayerIng();
         CyclePlayerHand();
         player = turn % 4 + 1;
         turn += 1;
         phase = "StartTurn";
+    }
+
+    private void DrawDishCard()
+    {
+        while (AllDishCard.Count < 3)
+        {
+            AllDishCard.Add(dishDeck[dishIdx]);
+            dishIdx = (dishIdx + 1) % dishDeck.Count;
+        }
+        UpdateDishCard();
     }
 
     private void CyclePlayerIng()
@@ -318,26 +398,26 @@ public class GameController : MonoBehaviour
 
         for (int shift = 0; shift < 4; shift++)
         {
-            int noCardDiff = AllIngTransfrom[shift].childCount - noCard[(player + shift) % 4];
+            int noCardDiff = AllIngTransform[shift].childCount - noCard[(player + shift) % 4];
 
             if (noCardDiff > 0)
             {
                 for (int count = 0; count < noCardDiff; count++) 
                 {
-                    Destroy(AllIngTransfrom[shift].GetChild(AllIngTransfrom[shift].childCount - count-1).gameObject);
+                    Destroy(AllIngTransform[shift].GetChild(AllIngTransform[shift].childCount - count-1).gameObject);
                 }
             }
             else if (noCardDiff < 0)
             {
                 for (int count = 0; count > noCardDiff; count--)
                 {
-                    Instantiate(prefabIng, AllIngTransfrom[shift]).GetComponent<CardBehavior>().canvas = overlayCanvas;
+                    Instantiate(prefabIng, AllIngTransform[shift]).GetComponent<CardBehavior>().canvas = overlayCanvas;
                 }
             }
 
             for (int idx = 0; idx < AllIngCard[(player + shift) % 4].Count; idx++)
             {
-                IngredientCardViz Viz = AllIngTransfrom[shift].GetChild(idx).GetComponent<IngredientCardViz>();
+                IngredientCardViz Viz = AllIngTransform[shift].GetChild(idx).GetComponent<IngredientCardViz>();
                 Viz.LoadCard(AllIngCard[(player + shift) % 4][idx]);
             }
         }
