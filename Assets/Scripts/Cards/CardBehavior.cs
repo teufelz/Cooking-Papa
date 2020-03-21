@@ -18,12 +18,6 @@ public class CardBehavior : MonoBehaviour
     void Start()
     {
         // Debug.Log("Script loaded");
-
-        overlay = Instantiate(gameObject, canvas);
-        overlay.transform.position = new Vector3(450, 200, 0);
-        overlay.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-
-        overlay.SetActive(false);
     }
 
     void OnMouseOver()
@@ -38,20 +32,23 @@ public class CardBehavior : MonoBehaviour
         }
         if (mouseIn == false)
         {
+            overlay = Instantiate(gameObject, canvas);
+            overlay.transform.position = new Vector3(450, 200, 0);
+            overlay.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
             // Debug.Log("over");
             mouseIn = true;
         }
-        overlay.SetActive(true);
+        //overlay.SetActive(true);
     }
 
     void OnMouseExit()
     {
         if (mouseIn == true)
         {
-            // Debug.Log("mouse exit");
             mouseIn = false;
         }
-        overlay.SetActive(false);
+        Destroy(overlay);
     }
 
     // Update is called once per frame
