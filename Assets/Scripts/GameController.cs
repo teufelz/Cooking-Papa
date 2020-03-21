@@ -290,14 +290,26 @@ public class GameController : MonoBehaviour
     // TODO: Fix this I don't get the algorithm
     private void UpdateDishCard()
     {
-        while (dishTransform.childCount < 3)
+        int noCardDiff = dishTransform.childCount - AllDishCard.Count;
+
+        if (noCardDiff > 0)
         {
-            Instantiate(prefabDish, dishTransform).GetComponent<CardBehavior>().canvas = overlayCanvas;
+            for (int count = 0; count < noCardDiff; count++)
+            {
+                Destroy(dishTransform.GetChild(dishTransform.childCount - count - 1).gameObject);
+            }
         }
-        for (int idx = 0; idx < 3; idx++)
+        else if (noCardDiff < 0)
+        {
+            for (int count = 0; count > noCardDiff; count--)
+            {
+                Instantiate(prefabDish, dishTransform).GetComponent<CardBehavior>().canvas = overlayCanvas;
+            }
+        }
+        for (int idx = 0; idx < AllDishCard.Count; idx++)
         {
             DishCardViz Viz = dishTransform.GetChild(idx).GetComponent<DishCardViz>();
-            Viz.LoadCard(dishDeck[idx]);
+            Viz.LoadCard(AllDishCard[idx]);
         }
     }
 
@@ -373,16 +385,140 @@ public class GameController : MonoBehaviour
         Debug.Log("Cooking Phase");
         yield return new WaitForSeconds(1);
         // cook or skip
-        yield return StartCoroutine(WaitForCooking());
+
+        DishCard selected = null;
+
+        yield return StartCoroutine(WaitForChoosingDish(value => selected = value));
+
+        Debug.Log(selected);
+
+        if (selected != null)
+        {
+            yield return StartCoroutine(WaitForCooking(selected));
+        }
         phase = "EndTurn";
     }
 
-    IEnumerator WaitForCooking()
+    IEnumerator WaitForChoosingDish(System.Action<DishCard> result)
     {
-        while (!Input.GetKeyDown(KeyCode.Space))
+        bool selected = false;
+
+        while (!selected)
         {
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                selected = true;
+                result(AllDishCard[0]);
+            }
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                selected = true;
+                result(AllDishCard[1]);
+            }
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                selected = true;
+                result(AllDishCard[2]);
+            }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                selected = true;
+                result(null);
+            }
             yield return null;
         }
+    }
+
+    IEnumerator WaitForCooking(DishCard dishCard)
+    {
+        List<IngredientCard> needed = new List<IngredientCard>(dishCard.ingredients);
+
+        List<int> used = new List<int>();
+
+        while (needed.Count > 0)
+        {
+            int idx = -1;
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                idx = 0;
+            }
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                idx = 1;
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                idx = 2;
+            }
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                idx = 3;
+            }
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                idx = 4;
+            }
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                idx = 5;
+            }
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                idx = 6;
+            }
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                idx = 7;
+            }
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                idx = 8;
+            }
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                idx = 9;
+            }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                used = new List<int>();
+                break;
+            }
+
+            if (idx >-1 && idx < AllIngCard[player - 1].Count)
+            {
+                IngredientCard pop = needed.Find(x => x.title == AllIngCard[player - 1][idx].title);
+                if (pop != null)
+                {
+                    if (!used.Contains(idx))
+                    {
+                        used.Add(idx);
+                        needed.Remove(pop);
+                    }
+                }
+                foreach(IngredientCard a in needed)
+                {
+                    Debug.Log(a.title);
+                }
+
+            }
+
+            yield return null;
+        }
+
+        used.Sort();
+
+        int shift = 0;
+        foreach (int idx in used)
+        {
+            AllIngCard[player - 1].RemoveAt(idx - shift);
+            shift++;
+        }
+        UpdateIngCard(0, player - 1);
+
+        //update score
+
+        AllDishCard.Remove(dishCard);
+        UpdateDishCard();
     }
 
     IEnumerator EndTurnPhase()

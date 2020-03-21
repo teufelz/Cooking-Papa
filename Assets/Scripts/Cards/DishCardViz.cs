@@ -23,28 +23,30 @@ public class DishCardViz : MonoBehaviour
 
         card = c;
         title.text = c.title;
-        
-        foreach (IngredientCard ingredient in c.ingredients)
-        {
-            int idx = 0;
-            GameObject obj;
-            Image image;
-            if (art.transform.childCount < c.ingredients.Count)
-            {
-                obj = Instantiate(new GameObject(),art.transform);
-                obj.name = "Ingredient";
-                image = obj.AddComponent<Image>();
-            }
-            else
-            {
-                obj = art.transform.GetChild(idx).gameObject;
-                image = obj.GetComponent<Image>();
-            }
 
-            image.sprite = ingredient.sprite;
-            idx++;
+        int noArtDiff = art.transform.childCount - c.ingredients.Count;
+
+        if (noArtDiff > 0)
+        {
+            for (int count = 0; count < noArtDiff; count++)
+            {
+                Destroy(art.transform.GetChild(art.transform.childCount - count - 1).gameObject);
+            }
+        }
+        else if (noArtDiff < 0)
+        {
+            for (int count = 0; count > noArtDiff; count--)
+            {
+                GameObject obj = Instantiate(new GameObject(), art.transform);
+                obj.name = "Ingredient";
+                obj.AddComponent<Image>();
+            }
         }
 
+        for (int idx = 0; idx < c.ingredients.Count; idx++)
+        {
+            art.transform.GetChild(idx).GetComponent<Image>().sprite = c.ingredients[idx].sprite;
+        }
         score.text = c.score.ToString();
     } 
 
