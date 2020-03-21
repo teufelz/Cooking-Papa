@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f784468c90e0764abafb325c4557b72, type: 3}
-  m_Name: PapayaPokPok
+  m_Name: Food2
   m_EditorClassIdentifier: 
-  title: Papaya Pok Pok
+  title: Food
   ingredients:
-  - {fileID: 11400000, guid: 17aa0ad82a946864db6df32405724511, type: 2}
-  - {fileID: 11400000, guid: 3df540827e4e32947b91d9679e2bc2e7, type: 2}
-  score: 3
+  - {fileID: 11400000, guid: 960e5c1371f35d74e8ad9b490a1606dc, type: 2}
+  - {fileID: 11400000, guid: 8597aac1b05ecd2498f7a1f5276886ee, type: 2}
+  score: 2

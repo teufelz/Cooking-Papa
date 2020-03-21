@@ -57,6 +57,8 @@ public class GameController : MonoBehaviour
             player4Ing
         };
 
+        AllDishCard = new List<DishCard>();
+
         GenerateIngDeck();
         GenerateDishDeck();
         InitializeDraw();
@@ -65,15 +67,31 @@ public class GameController : MonoBehaviour
     private void GenerateDishDeck()
     {
         dishDeck = new List<DishCard>();
-        string[] paths = { "Cards/Dish/Food", "Cards/Dish/PapayaPokPok", "Cards/Dish/Stew" };
+        string path = "Cards/Dish/Food";
 
         // load cards
-        foreach (string path in paths)
+        for (int count = 1; count < 16; count++) 
         {
-            for (int i = 0; i < 2; i++)
+            string realPath = path + count.ToString();
+            if (count < 11)
             {
-                dishDeck.Add(Resources.Load(path) as DishCard);
+                for (int i = 0; i < 3; i++)
+                {
+                    dishDeck.Add(Resources.Load(realPath) as DishCard);
+                }
             }
+            else if (count < 15)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    dishDeck.Add(Resources.Load(realPath) as DishCard);
+                }
+            }
+            else
+            {
+                dishDeck.Add(Resources.Load(realPath) as DishCard);    
+            }
+
         }
 
         // shuffle cards
@@ -143,8 +161,9 @@ public class GameController : MonoBehaviour
                 ingredientIdx = (ingredientIdx + 1) % ingredientDeck.Count;
             }
             UpdateIngCard(idx, idx);
-            // UpdateDishCard();
         }
+
+        DrawDishCard();
     }
 
     // Update is called once per frame
@@ -256,7 +275,6 @@ public class GameController : MonoBehaviour
     {
         while (dishTransform.childCount < 3)
         {
-            Debug.Log("Draw Dish");
             Instantiate(prefabDish, dishTransform).GetComponent<CardBehavior>().canvas = overlayCanvas;
         }
         for (int idx = 0; idx < 3; idx++)
@@ -349,11 +367,23 @@ public class GameController : MonoBehaviour
         Debug.Log("End Phase");
         yield return new WaitForSeconds(1);
         //check dish & hand & score
+        DrawDishCard();
+
         CyclePlayerIng();
         CyclePlayerHand();
         player = turn % 4 + 1;
         turn += 1;
         phase = "StartTurn";
+    }
+
+    private void DrawDishCard()
+    {
+        while (AllDishCard.Count < 3)
+        {
+            AllDishCard.Add(dishDeck[dishIdx]);
+            dishIdx = (dishIdx + 1) % dishDeck.Count;
+        }
+        UpdateDishCard();
     }
 
     private void CyclePlayerIng()
