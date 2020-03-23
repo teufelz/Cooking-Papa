@@ -527,6 +527,7 @@ public class GameController : MonoBehaviour
         int _player = 0;
         foreach (int score in scores)
         {
+            Debug.Log(score);
             _player++;
             if (score >= 1)
             {
@@ -541,9 +542,15 @@ public class GameController : MonoBehaviour
 
     IEnumerator GameEnd()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        bool select = false;
+        while (!select)
         {
-            Scene scene = SceneManager.GetActiveScene(); SceneManager.LoadScene(scene.name);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                select = true;
+                Scene scene = SceneManager.GetActiveScene(); SceneManager.LoadScene(scene.name);
+            }
+
         }
         yield return null;
     }
