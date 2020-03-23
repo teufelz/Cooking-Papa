@@ -66,11 +66,12 @@ public class GameController : MonoBehaviour
         };
 
         overlayDraw1 = Instantiate(prefabIng, overlayCanvas);
-        overlayDraw1.transform.position = new Vector3(350, 200, 0);
+        overlayDraw1.transform.position = new Vector3(200, 200, 0);
         overlayDraw1.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        //overlayDraw1.gameObject.GetComponent<box>
 
         overlayDraw2 = Instantiate(prefabIng, overlayCanvas);
-        overlayDraw2.transform.position = new Vector3(550, 200, 0);
+        overlayDraw2.transform.position = new Vector3(700, 200, 0);
         overlayDraw2.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
         overlayDraw1.SetActive(false);
@@ -81,6 +82,8 @@ public class GameController : MonoBehaviour
         GenerateIngDeck();
         GenerateDishDeck();
         InitializeDraw();
+        assignIngredientButton(false, player);
+        assignDishButton(false);
     }
 
     private void GenerateDishDeck()
@@ -262,6 +265,7 @@ public class GameController : MonoBehaviour
 
         AllIngCard[player - 1].Add(selected);
         UpdateIngCard(0, player - 1);
+        assignIngredientButton(false, player);
 
         phase = "DrawEvent";
     }
@@ -327,6 +331,9 @@ public class GameController : MonoBehaviour
         overlayDraw1.GetComponent<IngredientCardViz>().LoadCard(choice1);
         overlayDraw2.GetComponent<IngredientCardViz>().LoadCard(choice2);
 
+        overlayDraw1.GetComponent<IngredientCardViz>().setButton("J");
+        overlayDraw2.GetComponent<IngredientCardViz>().setButton("K");
+
         overlayDraw1.SetActive(true);
         overlayDraw2.SetActive(true);
 
@@ -388,7 +395,8 @@ public class GameController : MonoBehaviour
     IEnumerator CookingPhase()
     {
         Debug.Log("Cooking Phase");
-        yield return new WaitForSeconds(1);
+        assignDishButton(true);
+         yield return new WaitForSeconds(1);
         // cook or skip
 
         DishCard selected = null;
@@ -399,6 +407,8 @@ public class GameController : MonoBehaviour
 
         if (selected != null)
         {
+
+            assignDishButton(false);
             yield return StartCoroutine(WaitForCooking(selected));
         }
         phase = "EndTurn";
@@ -436,6 +446,7 @@ public class GameController : MonoBehaviour
 
     IEnumerator WaitForCooking(DishCard dishCard)
     {
+        assignIngredientButton(true, player);
         List<IngredientCard> needed = new List<IngredientCard>(dishCard.ingredients);
 
         List<int> used = new List<int>();
@@ -443,17 +454,46 @@ public class GameController : MonoBehaviour
         while (needed.Count > 0)
         {
             int idx = -1;
-            if      (Input.GetKeyDown(KeyCode.Q)) idx = 0;
-            else if (Input.GetKeyDown(KeyCode.W)) idx = 1;
-            else if (Input.GetKeyDown(KeyCode.E)) idx = 2;
-            else if (Input.GetKeyDown(KeyCode.R)) idx = 3;
-            else if (Input.GetKeyDown(KeyCode.T)) idx = 4;
-            else if (Input.GetKeyDown(KeyCode.Y)) idx = 5;
-            else if (Input.GetKeyDown(KeyCode.U)) idx = 6;
-            else if (Input.GetKeyDown(KeyCode.I)) idx = 7;
-            else if (Input.GetKeyDown(KeyCode.O)) idx = 8;
-            else if (Input.GetKeyDown(KeyCode.P)) idx = 9;
-
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                idx = 0;
+            }
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                idx = 1;
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                idx = 2;
+            }
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                idx = 3;
+            }
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                idx = 4;
+            }
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                idx = 5;
+            }
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                idx = 6;
+            }
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                idx = 7;
+            }
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                idx = 8;
+            }
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                idx = 9;
+            }
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 used = new List<int>();
@@ -471,6 +511,11 @@ public class GameController : MonoBehaviour
                         needed.Remove(pop);
                     }
                 }
+                foreach(IngredientCard a in needed)
+                {
+                    Debug.Log(a.title);
+                }
+
             }
 
             yield return null;
@@ -478,21 +523,17 @@ public class GameController : MonoBehaviour
 
         used.Sort();
 
-        int bonus = 0;
         int shift = 0;
         foreach (int idx in used)
         {
-            if(AllIngCard[player - 1][idx - shift].bonus)
-            {
-                bonus++;
-            }
             AllIngCard[player - 1].RemoveAt(idx - shift);
             shift++;
         }
+        assignIngredientButton(false, player);
         UpdateIngCard(0, player - 1);
 
         //update score
-        scores[player - 1] += dishCard.score + bonus;
+        scores[player - 1] += dishCard.score;
 
         //Check end game
         int _player = 0;
@@ -500,7 +541,7 @@ public class GameController : MonoBehaviour
         {
             Debug.Log(score);
             _player++;
-            if (score >= 1)
+            if (score >= 30)
             {
                 Debug.Log(_player.ToString() + "Win");
                 yield return StartCoroutine(GameEnd());
@@ -587,6 +628,53 @@ public class GameController : MonoBehaviour
             {
                 IngredientCardViz Viz = AllIngTransform[shift].GetChild(idx).GetComponent<IngredientCardViz>();
                 Viz.LoadCard(AllIngCard[(player + shift) % 4][idx]);
+            }
+        }
+    }
+
+    private void assignDishButton(bool visible)
+    {
+        List<string> buttons = new List<string>() { "J", "K", "L" };
+        if (visible)
+        {
+            //TODO: make button visible for dish
+            for(int idx = 0; idx < AllDishCard.Count; idx++)
+            {
+                DishCardViz Viz = dishTransform.GetChild(idx).GetComponent<DishCardViz>();
+                Viz.setButton(buttons[idx]);
+            }
+        }
+        else
+        {
+            //TODO: make button invisible for dish
+            for (int idx = 0; idx < AllDishCard.Count; idx++)
+            {
+                DishCardViz Viz = dishTransform.GetChild(idx).GetComponent<DishCardViz>();
+                Viz.setButton(null);
+            }
+        }
+    }
+
+    private void assignIngredientButton(bool visible, int currentPlayer)
+    {
+        List<string> buttons = new List<string>() { "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P" };
+        for (int i = 0; i < 4; i++)
+        {
+            if(i == currentPlayer - 1 && visible)
+            {
+                for(int j = 0; j < AllIngCard[i].Count; j++)
+                {
+                    IngredientCardViz Viz = AllIngTransform[i].GetChild(j).GetComponent<IngredientCardViz>();
+                    Viz.setButton(buttons[j]);
+                }
+            }
+            else
+            {
+                for (int j = 0; j < AllIngCard[player].Count; j++)
+                {
+                    IngredientCardViz Viz = AllIngTransform[i].GetChild(j).GetComponent<IngredientCardViz>();
+                    Viz.setButton(null);
+                }
             }
         }
     }

@@ -9,6 +9,9 @@ public class DishCardViz : MonoBehaviour
     public GameObject art;
     public Text score;
 
+    public Text button;
+    public RawImage buttonBGColor;
+
     public DishCard card;
 
     void Start()
@@ -48,6 +51,18 @@ public class DishCardViz : MonoBehaviour
             art.transform.GetChild(idx).GetComponent<Image>().sprite = c.ingredients[idx].sprite;
         }
         score.text = c.score.ToString();
-    } 
-
+    }
+    public void setButton(string button)
+    {
+        if (button == null)
+        {
+            buttonBGColor.color = new Color(0f, 0f, 0f, 0f);
+            this.button.text = "";
+        }
+        else
+        {
+            buttonBGColor.color = new Color(1f, 0f, 0.68f);
+            this.button.text = button;
+        }
+    }
 }
