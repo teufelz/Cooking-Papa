@@ -532,7 +532,8 @@ public class GameController : MonoBehaviour
             if (score >= 1)
             {
                 Debug.Log(_player.ToString() + "Win");
-                GameEnd();
+                yield return StartCoroutine(GameEnd());
+                break;
             }
         }
 
@@ -549,8 +550,11 @@ public class GameController : MonoBehaviour
             {
                 select = true;
                 Scene scene = SceneManager.GetActiveScene(); SceneManager.LoadScene(scene.name);
+                Debug.Log("Scene Reloaded");
+                break;
             }
-
+            // Prevent game crash
+            yield return null;
         }
         yield return null;
     }
