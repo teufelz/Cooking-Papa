@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -521,8 +522,30 @@ public class GameController : MonoBehaviour
 
         //update score
         scores[player - 1] += dishCard.score;
+
+        //Check end game
+        int _player = 0;
+        foreach (int score in scores)
+        {
+            _player++;
+            if (score >= 1)
+            {
+                Debug.Log(_player.ToString() + "Win");
+                GameEnd();
+            }
+        }
+
         AllDishCard.Remove(dishCard);
         UpdateDishCard();
+    }
+
+    IEnumerator GameEnd()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Scene scene = SceneManager.GetActiveScene(); SceneManager.LoadScene(scene.name);
+        }
+        yield return null;
     }
 
     IEnumerator EndTurnPhase()
