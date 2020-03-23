@@ -14,7 +14,9 @@ public class GameController : MonoBehaviour
 
     private int turn;
     private string phase;
-    private int player;
+    public int player;
+
+    public List<int> scores;
 
     private List<IngredientCard> player1Ing;
     private List<IngredientCard> player2Ing;
@@ -46,6 +48,8 @@ public class GameController : MonoBehaviour
         turn = 1;
         player = turn % 4;
         phase = "StartTurn";
+
+        scores = new List<int>() { 0, 0, 0, 0 };
 
         player1Ing = new List<IngredientCard>();
         player2Ing = new List<IngredientCard>();
@@ -516,7 +520,7 @@ public class GameController : MonoBehaviour
         UpdateIngCard(0, player - 1);
 
         //update score
-
+        scores[player - 1] += dishCard.score;
         AllDishCard.Remove(dishCard);
         UpdateDishCard();
     }
