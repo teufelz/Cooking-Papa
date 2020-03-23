@@ -443,46 +443,17 @@ public class GameController : MonoBehaviour
         while (needed.Count > 0)
         {
             int idx = -1;
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                idx = 0;
-            }
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                idx = 1;
-            }
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                idx = 2;
-            }
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                idx = 3;
-            }
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                idx = 4;
-            }
-            if (Input.GetKeyDown(KeyCode.Y))
-            {
-                idx = 5;
-            }
-            if (Input.GetKeyDown(KeyCode.U))
-            {
-                idx = 6;
-            }
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                idx = 7;
-            }
-            if (Input.GetKeyDown(KeyCode.O))
-            {
-                idx = 8;
-            }
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                idx = 9;
-            }
+            if      (Input.GetKeyDown(KeyCode.Q)) idx = 0;
+            else if (Input.GetKeyDown(KeyCode.W)) idx = 1;
+            else if (Input.GetKeyDown(KeyCode.E)) idx = 2;
+            else if (Input.GetKeyDown(KeyCode.R)) idx = 3;
+            else if (Input.GetKeyDown(KeyCode.T)) idx = 4;
+            else if (Input.GetKeyDown(KeyCode.Y)) idx = 5;
+            else if (Input.GetKeyDown(KeyCode.U)) idx = 6;
+            else if (Input.GetKeyDown(KeyCode.I)) idx = 7;
+            else if (Input.GetKeyDown(KeyCode.O)) idx = 8;
+            else if (Input.GetKeyDown(KeyCode.P)) idx = 9;
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 used = new List<int>();
@@ -500,11 +471,6 @@ public class GameController : MonoBehaviour
                         needed.Remove(pop);
                     }
                 }
-                foreach(IngredientCard a in needed)
-                {
-                    Debug.Log(a.title);
-                }
-
             }
 
             yield return null;
@@ -512,16 +478,21 @@ public class GameController : MonoBehaviour
 
         used.Sort();
 
+        int bonus = 0;
         int shift = 0;
         foreach (int idx in used)
         {
+            if(AllIngCard[player - 1][idx - shift].bonus)
+            {
+                bonus++;
+            }
             AllIngCard[player - 1].RemoveAt(idx - shift);
             shift++;
         }
         UpdateIngCard(0, player - 1);
 
         //update score
-        scores[player - 1] += dishCard.score;
+        scores[player - 1] += dishCard.score + bonus;
 
         //Check end game
         int _player = 0;
