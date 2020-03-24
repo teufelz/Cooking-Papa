@@ -10,6 +10,9 @@ public class EventCardViz : MonoBehaviour
     public Text effect;
     public Image type;
 
+    public RawImage buttonBGColor;
+    public Text button;
+
     public EventCard card;
 
     void Start()
@@ -27,6 +30,19 @@ public class EventCardViz : MonoBehaviour
         template.sprite = c.template;
         effect.text = c.effect;
         type.sprite = c.type;
-    } 
+    }
+    public void setButton(string button)
+    {
+        if (button == null)
+        {
+            buttonBGColor.color = new Color(0f, 0f, 0f, 0f);
+            this.button.text = "";
+        }
+        else
+        {
+            buttonBGColor.color = new Color(1f, 1f, 0f);
+            this.button.text = button;
+        }
+    }
 
 }
