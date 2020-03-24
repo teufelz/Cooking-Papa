@@ -214,6 +214,7 @@ public class GameController : MonoBehaviour
             "Cards/Event/Stonk",
             "Cards/Event/Reloaded",
             "Cards/Event/Lightning",
+            "Cards/Event/Nothing",
         };
 
         // load cards
@@ -455,7 +456,10 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            AllUsaCard[player - 1].Add(draw);
+            if (AllUsaCard[player - 1].Count < 3)
+            {
+                AllUsaCard[player - 1].Add(draw);
+            }
             UpdateUsaCard(player - 1);
         }
 
@@ -482,6 +486,8 @@ public class GameController : MonoBehaviour
             case "Lightning":
                 int randomPlayer = Random.Range(0, 4);
                 scores[randomPlayer] -= 2;
+                break;
+            case "Nothing":
                 break;
         }
     }
@@ -521,7 +527,7 @@ public class GameController : MonoBehaviour
     IEnumerator WaitForUsable(List<EventCard> hand, System.Action<EventCard> result)
     {
         bool selected = false;
-
+        assignEventButton(true, player - 1);
         while (!selected)
         {
             if (Input.GetKeyDown(KeyCode.J) && hand.Count>0)
@@ -546,6 +552,7 @@ public class GameController : MonoBehaviour
             }
             yield return null;
         }
+        assignEventButton(false, player - 1);
     }
 
     IEnumerator CookingPhase()
@@ -853,6 +860,29 @@ public class GameController : MonoBehaviour
             }
         }
     }
+
+    private void assignEventButton(bool visible, int currentPlayer)
+    {
+        List<string> buttons = new List<string>() { "J", "K", "L" };
+
+        if (visible)
+        {
+            for (int j = 0; j < AllUsaCard[currentPlayer].Count; j++)
+            {
+                EventCardViz Viz = eventTransform.GetChild(j).GetComponent<EventCardViz>();
+                Viz.setButton(buttons[j]);
+            }
+        }
+        else
+        {
+            for (int j = 0; j < eventTransform.childCount; j++)
+            {
+                EventCardViz Viz = eventTransform.GetChild(j).GetComponent<EventCardViz>();
+                Viz.setButton(null);
+            }
+        }
+    }
+
 
     private void CyclePlayerHand()
     {
