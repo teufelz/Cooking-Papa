@@ -7,9 +7,11 @@ public class GameController : MonoBehaviour
 {
     public GameObject prefabIng;
     public GameObject prefabDish;
+    public GameObject prefabEvent;
 
     public List<Transform> AllIngTransform;
     public Transform dishTransform;
+    public Transform eventTransform;
 
     public Transform overlayCanvas;
 
@@ -28,14 +30,22 @@ public class GameController : MonoBehaviour
     private List<EventCard> eventDeck;
     private List<DishCard> dishDeck;
 
+    private List<EventCard> player1Usa;
+    private List<EventCard> player2Usa;
+    private List<EventCard> player3Usa;
+    private List<EventCard> player4Usa;
+
     List<List<IngredientCard>> AllIngCard;
+    List<List<EventCard>> AllUsaCard;
     List<DishCard> AllDishCard;
 
     private int ingredientIdx;
+    private int eventIdx;
     private int dishIdx;
 
     private GameObject overlayDraw1;
     private GameObject overlayDraw2;
+    private GameObject overlayEvent;
 
     // Start is called before the first frame update
     void Start()
@@ -65,6 +75,19 @@ public class GameController : MonoBehaviour
             player4Ing
         };
 
+        player1Usa = new List<EventCard>();
+        player2Usa = new List<EventCard>();
+        player3Usa = new List<EventCard>();
+        player4Usa = new List<EventCard>();
+
+        AllUsaCard = new List<List<EventCard>>()
+        {
+            player1Usa,
+            player2Usa,
+            player3Usa,
+            player4Usa
+        };
+
         overlayDraw1 = Instantiate(prefabIng, overlayCanvas);
         overlayDraw1.transform.position = new Vector3(200, 200, 0);
         overlayDraw1.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
@@ -77,9 +100,15 @@ public class GameController : MonoBehaviour
         overlayDraw1.SetActive(false);
         overlayDraw2.SetActive(false);
 
+        overlayEvent = Instantiate(prefabEvent, overlayCanvas);
+        overlayEvent.transform.position = new Vector3(450, 200, 0);
+        overlayEvent.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        overlayEvent.SetActive(false);
+
         AllDishCard = new List<DishCard>();
 
         GenerateIngDeck();
+        GenerateEventDeck();
         GenerateDishDeck();
         InitializeDraw();
         assignIngredientButton(false, player);
@@ -173,6 +202,36 @@ public class GameController : MonoBehaviour
         ingredientIdx = 0;
     }
 
+    private void GenerateEventDeck()
+    {
+        eventDeck = new List<EventCard>();
+        List<string> paths = new List<string>
+        {
+            "Cards/Event/Stonk",
+            "Cards/Event/Reloaded",
+            "Cards/Event/Lightning",
+        };
+
+        // load cards
+        foreach (string path in paths)
+        {
+            for (int i = 0; i < 3; i++)
+                eventDeck.Add(Resources.Load(path) as EventCard);
+        }
+
+        // shuffle cards
+        for (int i = 0; i < eventDeck.Count; i++)
+        {
+            EventCard temp = eventDeck[i];
+            int randomIndex = Random.Range(i, eventDeck.Count);
+            eventDeck[i] = eventDeck[randomIndex];
+            eventDeck[randomIndex] = temp;
+        }
+
+        //set index to 0
+        eventIdx = 0;
+    }
+
     private void InitializeDraw()
     {
         for (int idx = 0; idx < 4; idx++)
@@ -209,14 +268,6 @@ public class GameController : MonoBehaviour
 
                 case "DrawEvent":
                     yield return StartCoroutine(DrawEventPhase());
-                    break;
-
-                case "InstantEvent":
-                    yield return StartCoroutine(InstantEventPhase());
-                    break;
-
-                case "UsableEvent":
-                    yield return StartCoroutine(UsableEventPhase());
                     break;
 
                 case "Cooking":
@@ -296,7 +347,6 @@ public class GameController : MonoBehaviour
         }
     }
 
-    // TODO: Fix this I don't get the algorithm
     private void UpdateDishCard()
     {
         int noCardDiff = dishTransform.childCount - AllDishCard.Count;
@@ -319,6 +369,32 @@ public class GameController : MonoBehaviour
         {
             DishCardViz Viz = dishTransform.GetChild(idx).GetComponent<DishCardViz>();
             Viz.LoadCard(AllDishCard[idx]);
+        }
+    }
+
+    private void UpdateUsaCard( int playerIdx)
+    {
+        int noCardDiff = eventTransform.childCount - AllUsaCard[playerIdx].Count;
+
+        if (noCardDiff > 0)
+        {
+            for (int count = 0; count < noCardDiff; count++)
+            {
+                Destroy(eventTransform.GetChild(eventTransform.childCount - count - 1).gameObject);
+            }
+        }
+        else if (noCardDiff < 0)
+        {
+            for (int count = 0; count > noCardDiff; count--)
+            {
+                Instantiate(prefabEvent, eventTransform).GetComponent<CardBehavior>().canvas = overlayCanvas;
+            }
+        }
+
+        for (int idx = 0; idx < AllUsaCard[playerIdx].Count; idx++)
+        {
+            EventCardViz Viz = eventTransform.GetChild(idx).GetComponent<EventCardViz>();
+            Viz.LoadCard(AllUsaCard[playerIdx][idx]);
         }
     }
 
@@ -358,36 +434,109 @@ public class GameController : MonoBehaviour
         Debug.Log("Draw Event Phase");
         yield return new WaitForSeconds(1);
         // draw event
+        EventCard draw = eventDeck[eventIdx];
+        eventIdx = (eventIdx + 1) % eventDeck.Count;
+
+        overlayEvent.GetComponent<EventCardViz>().LoadCard(draw);
+
+        overlayEvent.SetActive(true);
+
+        yield return new WaitForSeconds(3);
+        overlayEvent.SetActive(false);
+
         // check event type proceed to next phase (Instant or Usable) 
-        //if (event card type) 
-        phase = "InstantEvent";
-        //else if have usable on hand proceed to usable
-        //phase = UsableEvent 
-        //else 
-        // phase = Cooking
+        if (draw.instant)
+        {
+            yield return StartCoroutine(InstantEventPhase(draw));
+        }
+        else
+        {
+            AllUsaCard[player - 1].Add(draw);
+            UpdateUsaCard(player - 1);
+        }
+
+        if (AllUsaCard[player - 1].Count > 0)
+        {
+            yield return StartCoroutine(UsableEventPhase());
+        }
+
+        phase = "Cooking";
     }
 
-    IEnumerator InstantEventPhase()
+    IEnumerator InstantEventPhase(EventCard eventCard)
     {
         Debug.Log("Instant Phase");
+
         yield return new WaitForSeconds(1);
-        //if have usable on hand proceed to usable
-        phase = "UsableEvent";
+        
+        //call instant func
+        switch (eventCard.title)
+        {
+            case "Stonk":
+                scores[player - 1] += 2;
+                break;
+            case "Lightning":
+                int randomPlayer = Random.Range(0, 4);
+                scores[randomPlayer] -= 2;
+                break;
+        }
     }
 
     IEnumerator UsableEventPhase()
     {
         Debug.Log("Usable Phase");
-        yield return new WaitForSeconds(1);
+
         // use or skip
-        yield return StartCoroutine(WaitForUsable());
-        phase = "Cooking";
+        EventCard selected = null;
+
+        yield return StartCoroutine(WaitForUsable(AllUsaCard[player-1],value => selected = value));
+
+        Debug.Log(selected);
+
+        if (selected != null)
+        {
+            switch (selected.title)
+            {
+                case "Reloaded":
+                    for (int i = 0; i < 2; i++)
+                    {
+                        IngredientCard draw = ingredientDeck[ingredientIdx];
+                        AllIngCard[player - 1].Add(draw);
+                        ingredientIdx = (ingredientIdx + 1) % ingredientDeck.Count;
+                    }
+
+                    UpdateIngCard(0, player - 1);
+                    break;
+            }
+        }
     }
 
-    IEnumerator WaitForUsable()
+    IEnumerator WaitForUsable(List<EventCard> hand, System.Action<EventCard> result)
     {
-        while (!Input.GetKeyDown(KeyCode.Space))
+        bool selected = false;
+
+        while (!selected)
         {
+            if (Input.GetKeyDown(KeyCode.J) && hand.Count>0)
+            {
+                selected = true;
+                result(hand[0]);
+            }
+            if (Input.GetKeyDown(KeyCode.K) && hand.Count > 1)
+            {
+                selected = true;
+                result(hand[1]);
+            }
+            if (Input.GetKeyDown(KeyCode.L) && hand.Count > 2)
+            {
+                selected = true;
+                result(hand[2]);
+            }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                selected = true;
+                result(null);
+            }
             yield return null;
         }
     }
@@ -681,6 +830,6 @@ public class GameController : MonoBehaviour
 
     private void CyclePlayerHand()
     {
-
+        UpdateUsaCard(player%4);
     }
 }
