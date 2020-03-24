@@ -248,7 +248,6 @@ public class GameController : MonoBehaviour
             }
             UpdateIngCard(idx, idx);
         }
-
         DrawDishCard();
     }
 
@@ -319,7 +318,11 @@ public class GameController : MonoBehaviour
         overlayDraw1.SetActive(false);
         overlayDraw2.SetActive(false);
 
-        AllIngCard[player - 1].Add(selected);
+        if (AllIngCard[player - 1].Count <= 7)
+        {
+            AllIngCard[player - 1].Add(selected);
+        }
+
         UpdateIngCard(0, player - 1);
         assignIngredientButton(false, player -1);
 
@@ -505,9 +508,15 @@ public class GameController : MonoBehaviour
 
         if (selected != null)
         {
+            bool usingSuccessful = true;
             switch (selected.title)
             {
                 case "Reloaded":
+                    if (AllIngCard[player - 1].Count >= 9)
+                    {
+                        usingSuccessful = false;
+                        break;
+                    }
                     for (int i = 0; i < 2; i++)
                     {
                         IngredientCard draw = ingredientDeck[ingredientIdx];
@@ -518,8 +527,10 @@ public class GameController : MonoBehaviour
                     UpdateIngCard(0, player - 1);
                     break;
             }
-
-            AllUsaCard[player - 1].Remove(selected);
+            if (usingSuccessful)
+            {
+                AllUsaCard[player - 1].Remove(selected);
+            }
             UpdateUsaCard(player - 1);
         }
     }
@@ -575,6 +586,7 @@ public class GameController : MonoBehaviour
             yield return StartCoroutine(WaitForCooking(selected));
         }
 
+        overlayDish.SetActive(false);
         phase = "EndTurn";
     }
 
@@ -705,7 +717,6 @@ public class GameController : MonoBehaviour
                 }
             }
 
-            overlayDish.SetActive(false);
             AllDishCard.Remove(dishCard);
             UpdateDishCard();
         }
