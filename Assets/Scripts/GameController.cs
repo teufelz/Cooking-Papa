@@ -214,6 +214,7 @@ public class GameController : MonoBehaviour
             "Cards/Event/Stonk",
             "Cards/Event/Reloaded",
             "Cards/Event/Lightning",
+            "Cards/Event/Nothing",
         };
 
         // load cards
@@ -482,6 +483,8 @@ public class GameController : MonoBehaviour
             case "Lightning":
                 int randomPlayer = Random.Range(0, 4);
                 scores[randomPlayer] -= 2;
+                break;
+            case "Nothing":
                 break;
         }
     }
