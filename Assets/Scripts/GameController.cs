@@ -512,6 +512,9 @@ public class GameController : MonoBehaviour
                     UpdateIngCard(0, player - 1);
                     break;
             }
+
+            AllUsaCard[player - 1].Remove(selected);
+            UpdateUsaCard(player - 1);
         }
     }
 
@@ -558,12 +561,13 @@ public class GameController : MonoBehaviour
 
         Debug.Log(selected);
 
+        assignDishButton(false);
+
         if (selected != null)
         {
-
-            assignDishButton(false);
             yield return StartCoroutine(WaitForCooking(selected));
         }
+
         phase = "EndTurn";
     }
 
@@ -678,16 +682,21 @@ public class GameController : MonoBehaviour
         {
             used.Sort();
 
+            int bonus = 0;
             int shift = 0;
             foreach (int idx in used)
             {
+                if (AllIngCard[player - 1][idx - shift].bonus)
+                {
+                    bonus++;
+                }
                 AllIngCard[player - 1].RemoveAt(idx - shift);
                 shift++;
             }
             UpdateIngCard(0, player - 1);
 
             //update score
-            scores[player - 1] += dishCard.score;
+            scores[player - 1] += dishCard.score + bonus;
 
             //Check end game
             int _player = 0;
