@@ -94,18 +94,18 @@ public class GameController : MonoBehaviour
         };
 
         overlayDraw1 = Instantiate(prefabIng, overlayCanvas);
-        overlayDraw1.transform.position = new Vector3(200, 200, 0);
+        overlayDraw1.transform.position = new Vector3(Screen.width / 2 -150, Screen.height/2, 0);
         overlayDraw1.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
         overlayDraw2 = Instantiate(prefabIng, overlayCanvas);
-        overlayDraw2.transform.position = new Vector3(700, 200, 0);
+        overlayDraw2.transform.position = new Vector3(Screen.width / 2 +150, Screen.height / 2, 0);
         overlayDraw2.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
         overlayDraw1.SetActive(false);
         overlayDraw2.SetActive(false);
 
         overlayEvent = Instantiate(prefabEvent, overlayCanvas);
-        overlayEvent.transform.position = new Vector3(450, 200, 0);
+        overlayEvent.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
         overlayEvent.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         overlayEvent.SetActive(false);
 
