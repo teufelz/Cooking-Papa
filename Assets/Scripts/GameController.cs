@@ -7,6 +7,8 @@ public class GameController : MonoBehaviour
 {
     public GameObject prefabIng;
     public GameObject prefabDish;
+    public GameObject gameOver;
+    public int WINSCORE;
 
     public List<Transform> AllIngTransform;
     public Transform dishTransform;
@@ -16,6 +18,7 @@ public class GameController : MonoBehaviour
     private int turn;
     private string phase;
     public int player;
+    private int winner;
 
     public List<int> scores;
 
@@ -46,6 +49,7 @@ public class GameController : MonoBehaviour
 
     private void Initialize()
     {
+        winner = 0;
         turn = 1;
         player = turn % 4;
         phase = "StartTurn";
@@ -541,9 +545,10 @@ public class GameController : MonoBehaviour
         {
             Debug.Log(score);
             _player++;
-            if (score >= 30)
+            if (score >= WINSCORE)
             {
                 Debug.Log(_player.ToString() + "Win");
+                winner = _player;
                 yield return StartCoroutine(GameEnd());
                 break;
             }
@@ -553,9 +558,20 @@ public class GameController : MonoBehaviour
         UpdateDishCard();
     }
 
+    public int getWinner()
+    {
+        return winner;
+    }
+    public string getPhase()
+    {
+        return phase;
+    }
+
     IEnumerator GameEnd()
     {
         bool select = false;
+        gameOver.SetActive(true);
+        gameOver.GetComponent<GameOver>().show(winner);
         while (!select)
         {
             if (Input.GetKeyDown(KeyCode.Space))

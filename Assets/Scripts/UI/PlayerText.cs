@@ -16,6 +16,7 @@ public class PlayerText : MonoBehaviour
     void Update()
     {
         string player = script.player.ToString();
-        gameObject.GetComponent<UnityEngine.UI.Text>().text = "Player " + player;
+        string phase = script.getPhase();
+        gameObject.GetComponent<UnityEngine.UI.Text>().text = "Player " + player + "\nPhase: " + phase;
     }
 }
