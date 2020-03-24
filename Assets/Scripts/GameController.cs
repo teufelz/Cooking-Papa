@@ -674,37 +674,40 @@ public class GameController : MonoBehaviour
             yield return null;
         }
 
-        used.Sort();
-
-        int shift = 0;
-        foreach (int idx in used)
+        if (needed.Count == 0)
         {
-            AllIngCard[player - 1].RemoveAt(idx - shift);
-            shift++;
-        }
-        assignIngredientButton(false, player-1);
-        UpdateIngCard(0, player - 1);
+            used.Sort();
 
-        //update score
-        scores[player - 1] += dishCard.score;
-
-        //Check end game
-        int _player = 0;
-        foreach (int score in scores)
-        {
-            Debug.Log(score);
-            _player++;
-            if (score >= WINSCORE)
+            int shift = 0;
+            foreach (int idx in used)
             {
-                Debug.Log(_player.ToString() + "Win");
-                winner = _player;
-                yield return StartCoroutine(GameEnd());
-                break;
+                AllIngCard[player - 1].RemoveAt(idx - shift);
+                shift++;
             }
-        }
+            UpdateIngCard(0, player - 1);
 
-        AllDishCard.Remove(dishCard);
-        UpdateDishCard();
+            //update score
+            scores[player - 1] += dishCard.score;
+
+            //Check end game
+            int _player = 0;
+            foreach (int score in scores)
+            {
+                Debug.Log(score);
+                _player++;
+                if (score >= WINSCORE)
+                {
+                    Debug.Log(_player.ToString() + "Win");
+                    winner = _player;
+                    yield return StartCoroutine(GameEnd());
+                    break;
+                }
+            }
+
+            AllDishCard.Remove(dishCard);
+            UpdateDishCard();
+        }
+        assignIngredientButton(false, player - 1);
     }
 
     public int getWinner()
