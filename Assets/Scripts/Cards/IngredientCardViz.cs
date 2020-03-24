@@ -62,4 +62,15 @@ public class IngredientCardViz : MonoBehaviour
         }
     }
 
+    public void setSelected(bool selected)
+    {
+        if (selected)
+        {
+            buttonBGColor.color = new Color(0f, 0.6f, 0f);
+        }
+        else
+        {
+            buttonBGColor.color = new Color(0f, 1f, 0.1f);
+        }
+    }
 }
