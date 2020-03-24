@@ -115,7 +115,7 @@ public class GameController : MonoBehaviour
         GenerateEventDeck();
         GenerateDishDeck();
         InitializeDraw();
-        assignIngredientButton(false, player);
+        assignIngredientButton(false, player - 1);
         assignDishButton(false);
     }
 
@@ -320,7 +320,7 @@ public class GameController : MonoBehaviour
 
         AllIngCard[player - 1].Add(selected);
         UpdateIngCard(0, player - 1);
-        assignIngredientButton(false, player);
+        assignIngredientButton(false, player -1);
 
         phase = "DrawEvent";
     }
@@ -599,7 +599,7 @@ public class GameController : MonoBehaviour
 
     IEnumerator WaitForCooking(DishCard dishCard)
     {
-        assignIngredientButton(true, player);
+        assignIngredientButton(true, player -1);
         List<IngredientCard> needed = new List<IngredientCard>(dishCard.ingredients);
 
         List<int> used = new List<int>();
@@ -682,7 +682,7 @@ public class GameController : MonoBehaviour
             AllIngCard[player - 1].RemoveAt(idx - shift);
             shift++;
         }
-        assignIngredientButton(false, player);
+        assignIngredientButton(false, player-1);
         UpdateIngCard(0, player - 1);
 
         //update score
@@ -823,23 +823,21 @@ public class GameController : MonoBehaviour
     private void assignIngredientButton(bool visible, int currentPlayer)
     {
         List<string> buttons = new List<string>() { "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P" };
-        for (int i = 0; i < 4; i++)
+
+        if (visible)
         {
-            if(i == currentPlayer - 1 && visible)
+            for (int j = 0; j < AllIngCard[currentPlayer].Count; j++)
             {
-                for(int j = 0; j < AllIngCard[i].Count; j++)
-                {
-                    IngredientCardViz Viz = AllIngTransform[i].GetChild(j).GetComponent<IngredientCardViz>();
-                    Viz.setButton(buttons[j]);
-                }
+                IngredientCardViz Viz = AllIngTransform[0].GetChild(j).GetComponent<IngredientCardViz>();
+                Viz.setButton(buttons[j]);
             }
-            else
+        }
+        else
+        {
+            for (int j = 0; j < AllIngTransform[0].childCount; j++)
             {
-                for (int j = 0; j < AllIngCard[player].Count; j++)
-                {
-                    IngredientCardViz Viz = AllIngTransform[i].GetChild(j).GetComponent<IngredientCardViz>();
-                    Viz.setButton(null);
-                }
+                IngredientCardViz Viz = AllIngTransform[0].GetChild(j).GetComponent<IngredientCardViz>();
+                Viz.setButton(null);
             }
         }
     }
