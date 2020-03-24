@@ -48,6 +48,7 @@ public class GameController : MonoBehaviour
 
     private GameObject overlayDraw1;
     private GameObject overlayDraw2;
+    private GameObject overlayDish;
     private GameObject overlayEvent;
 
     // Start is called before the first frame update
@@ -95,7 +96,6 @@ public class GameController : MonoBehaviour
         overlayDraw1 = Instantiate(prefabIng, overlayCanvas);
         overlayDraw1.transform.position = new Vector3(200, 200, 0);
         overlayDraw1.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        //overlayDraw1.gameObject.GetComponent<box>
 
         overlayDraw2 = Instantiate(prefabIng, overlayCanvas);
         overlayDraw2.transform.position = new Vector3(700, 200, 0);
@@ -248,7 +248,6 @@ public class GameController : MonoBehaviour
             }
             UpdateIngCard(idx, idx);
         }
-
         DrawDishCard();
     }
 
@@ -319,7 +318,11 @@ public class GameController : MonoBehaviour
         overlayDraw1.SetActive(false);
         overlayDraw2.SetActive(false);
 
-        AllIngCard[player - 1].Add(selected);
+        if (AllIngCard[player - 1].Count <= 7)
+        {
+            AllIngCard[player - 1].Add(selected);
+        }
+
         UpdateIngCard(0, player - 1);
         assignIngredientButton(false, player -1);
 
@@ -505,9 +508,15 @@ public class GameController : MonoBehaviour
 
         if (selected != null)
         {
+            bool usingSuccessful = true;
             switch (selected.title)
             {
                 case "Reloaded":
+                    if (AllIngCard[player - 1].Count >= 9)
+                    {
+                        usingSuccessful = false;
+                        break;
+                    }
                     for (int i = 0; i < 2; i++)
                     {
                         IngredientCard draw = ingredientDeck[ingredientIdx];
@@ -518,8 +527,10 @@ public class GameController : MonoBehaviour
                     UpdateIngCard(0, player - 1);
                     break;
             }
-
-            AllUsaCard[player - 1].Remove(selected);
+            if (usingSuccessful)
+            {
+                AllUsaCard[player - 1].Remove(selected);
+            }
             UpdateUsaCard(player - 1);
         }
     }
@@ -575,6 +586,7 @@ public class GameController : MonoBehaviour
             yield return StartCoroutine(WaitForCooking(selected));
         }
 
+        overlayDish.SetActive(false);
         phase = "EndTurn";
     }
 
@@ -582,21 +594,36 @@ public class GameController : MonoBehaviour
     {
         bool selected = false;
 
+        overlayDish = Instantiate(prefabDish, overlayCanvas);
+        overlayDish.transform.position = new Vector3(350, 300, 0);
+        overlayDish.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+        overlayDish.SetActive(false);
+
         while (!selected)
         {
             if (Input.GetKeyDown(KeyCode.J))
             {
                 selected = true;
+                overlayDish.GetComponent<DishCardViz>().LoadCard(AllDishCard[0]);
+                overlayDish.GetComponent<DishCardViz>().setButton(null);
+                overlayDish.SetActive(true);
                 result(AllDishCard[0]);
             }
             if (Input.GetKeyDown(KeyCode.K))
             {
                 selected = true;
+                overlayDish.GetComponent<DishCardViz>().LoadCard(AllDishCard[1]);
+                overlayDish.GetComponent<DishCardViz>().setButton(null);
+                overlayDish.SetActive(true);
                 result(AllDishCard[1]);
             }
             if (Input.GetKeyDown(KeyCode.L))
             {
                 selected = true;
+                overlayDish.GetComponent<DishCardViz>().LoadCard(AllDishCard[2]);
+                overlayDish.GetComponent<DishCardViz>().setButton(null);
+                overlayDish.SetActive(true);
                 result(AllDishCard[2]);
             }
             if (Input.GetKeyDown(KeyCode.Space))
@@ -618,46 +645,18 @@ public class GameController : MonoBehaviour
         while (needed.Count > 0)
         {
             int idx = -1;
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                idx = 0;
-            }
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                idx = 1;
-            }
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                idx = 2;
-            }
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                idx = 3;
-            }
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                idx = 4;
-            }
-            if (Input.GetKeyDown(KeyCode.Y))
-            {
-                idx = 5;
-            }
-            if (Input.GetKeyDown(KeyCode.U))
-            {
-                idx = 6;
-            }
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                idx = 7;
-            }
-            if (Input.GetKeyDown(KeyCode.O))
-            {
-                idx = 8;
-            }
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                idx = 9;
-            }
+
+            if (Input.GetKeyDown(KeyCode.Q)) idx = 0;
+            else if (Input.GetKeyDown(KeyCode.W)) idx = 1;
+            else if (Input.GetKeyDown(KeyCode.E)) idx = 2;
+            else if (Input.GetKeyDown(KeyCode.R)) idx = 3;
+            else if (Input.GetKeyDown(KeyCode.T)) idx = 4;
+            else if (Input.GetKeyDown(KeyCode.Y)) idx = 5;
+            else if (Input.GetKeyDown(KeyCode.U)) idx = 6;
+            else if (Input.GetKeyDown(KeyCode.I)) idx = 7;
+            else if (Input.GetKeyDown(KeyCode.O)) idx = 8;
+            else if (Input.GetKeyDown(KeyCode.P)) idx = 9;
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 used = new List<int>();
@@ -673,13 +672,11 @@ public class GameController : MonoBehaviour
                     {
                         used.Add(idx);
                         needed.Remove(pop);
+                        IngredientCardViz Viz = AllIngTransform[0].GetChild(idx).GetComponent<IngredientCardViz>();
+                        Viz.setSelected(true);
+                        UpdateIngCard(0, player - 1);
                     }
                 }
-                foreach(IngredientCard a in needed)
-                {
-                    Debug.Log(a.title);
-                }
-
             }
 
             yield return null;
